@@ -18,16 +18,17 @@ export const gameDetails = {
     desc: 'Welcome to the world of... here are some quick rules & concepts...',
     author: 'Jake McCarthy',
     cohort: 'PTSDB-MAY-2023',
-    startingRoomDescription: 'What you see before you is....',
+    startingRoomDescription: "You are in a grand foyer with a beautiful chandelier hanging from the ceiling. There is a living room to the north and a kitchen east of the living room.",
     playerCommands: [
         // replace these with your games commands as needed
-        'inspect', 'view', 'look', 'take', 'drop'
+        'inventory', 'take', 'drop', 'examine'
     ]
     // Commands are basic things that a player can do throughout the game besides possibly moving to another room. This line will populate on the footer of your game for players to reference. 
     // This shouldn't be more than 6-8 different commands.
 }
 
 // Your code here
+let textReply = "";
 
 export const domDisplay = (playerInput) => {
     /* 
@@ -63,7 +64,7 @@ export const domDisplay = (playerInput) => {
 
     // Your code here
 
-    console.log(`Typed Input: ${playerInput}`);
+
 
     class Room {
         constructor(name, description) {
@@ -75,9 +76,10 @@ export const domDisplay = (playerInput) => {
             this.south= null;
             this.east= null;
             this.west= null;
+            this.destroyed = null;
         }
 
-        addItem () {
+        addItem(item) {
 
         }
 
@@ -87,19 +89,104 @@ export const domDisplay = (playerInput) => {
 
     }
 
-    class Item {
-        constructor(name, description, takeable) {
-            this.name = name;
-            this.description = description;
-            this.takeable = takeable;
-            this.activated = null;
-        }
+
+//! Rooms List
+
+const foyer = new Room(
+    "Foyer",
+    "You are in a grand foyer with a beautiful chandelier hanging from the ceiling. There is a living room to the north and a kitchen east of the living room."
+)
+
+const livingRoom = new Room(
+    "Living Room",
+    "You are in a cozy sitting area with a fireplace and comfortable chairs. To the south is the Foyer. To the east is the Kitchen. There is a vague scent of pine and sandalwood here."
+)
+
+const kitchen = new Room(
+    "Kitchen",
+    "You are in a spacious kitchen with somewhat dated appliances. The appliances have strange modifications to them including various metal coils, wires and glass tubes, without apparent purpose. To the east is the Conservatory. To the west is the Living Room."
+)
+
+const conservatory = new Room(
+    "Conservatory",
+    "You are in a conservatory with lots of stained glass and pebbled windows. Light filters through, although you cannot discern what is directly outside. There are many plants, unusual flowers and even a few trees in huge pots. To the west is the Kitchen."
+)
+
+
+//* State Machine for Locations
+
+const availableExits = {
+    'foyer': ['living room'],
+    'living room': ['foyer', 'kitchen'],
+    'kitchen': ['living room', 'conservatory'],
+    'conservatory': ['kitchen']
+}
+
+//! Items Construction
+
+class Item {
+    constructor(name, description, takeable) {
+        this.name = name;
+        this.description = description;
+        this.takeable = takeable;
+        // this.activated = null;
+    }
+}
+
+//! Items List
+
+const silverKey = new Item(
+    "Silver Key", 
+    "A shiny metal skeleton key.", 
+    true
+);
+
+const screwdriver = new Item(
+    "Screwdriver", 
+    "A tool with a flat head and a magnetic tip.", 
+    true
+);
+
+const note = new Item(
+    "Note", 
+    "A loose piece of paper with some writing on it.", 
+    true
+);
+
+const brooch = new Item(
+    "Brooch", 
+    "A delicate gold filigree brooch in the shape of a leaf with green accents.", 
+    true
+);
+
+
+//! Game Play
+
+let startRoom = foyer;
+let currentRoom = startRoom;
+playerInput = playerInput.toLowerCase();
+
+    if(playerInput == "test") {
+        textReply = `You typed '${playerInput.toUpperCase()}'.`
+        console.log(textReply);
+        return textReply;
+    } else if (playerInput === "look") {
+        // console.log(currentRoom.inventory);
+        console.log(currentRoom.availableExits);
+        textReply = `You are in the ${currentRoom.name}. ${currentRoom.description} Available exits: ${availableExits[currentRoom.name.toLowerCase()]}`
+        console.log(textReply);
+        return textReply;
+    } else if (playerInput === "north" || playerInput === "living room") {
+        textReply = `You typed ${playerInput}.`
+        console.log(textReply);
+        return textReply;
+    } else {
+        textReply = `You typed '${playerInput.toUpperCase()}'. This is not a valid command. Try rephrasing this.`
+        console.log(textReply);
+        return textReply;
     }
 
-
-
-
-
+    // console.log(`Typed Input: ${playerInput}`);
 
 
 } 
