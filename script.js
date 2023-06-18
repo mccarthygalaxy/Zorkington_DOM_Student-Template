@@ -14,14 +14,14 @@
 */
 
 export const gameDetails = {   
-    title: 'Game Title',
+    title: 'Zorkington Galaxy',
     desc: 'Welcome to the world of... here are some quick rules & concepts...',
-    author: 'Student Name',
-    cohort: 'SBPT-2022',
+    author: 'Jake McCarthy',
+    cohort: 'PTSDB-MAY-2023',
     startingRoomDescription: 'What you see before you is...',
     playerCommands: [
         // replace these with your games commands as needed
-        'inspect', 'view', 'look', 'pickup',
+        'inspect', 'view', 'look', 'take', 'drop'
     ]
     // Commands are basic things that a player can do throughout the game besides possibly moving to another room. This line will populate on the footer of your game for players to reference. 
     // This shouldn't be more than 6-8 different commands.
@@ -62,4 +62,44 @@ export const domDisplay = (playerInput) => {
     */
 
     // Your code here
+
+    console.log(`Typed Input: ${playerInput}`);
+
+    class Room {
+        constructor(name, description) {
+            this.name = name;
+            this.description = description;
+            this.inventory = [];
+            this.locked = null;
+            this.north = null;
+            this.south= null;
+            this.east= null;
+            this.west= null;
+        }
+
+        addItem () {
+
+        }
+
+        removeItem () {
+
+        }
+
+    }
+
+    class Item {
+        constructor(name, description, takeable) {
+            this.name = name;
+            this.description = description;
+            this.takeable = takeable;
+            this.activated = null;
+        }
+    }
+
+
+
+
+
+
+
 } 
