@@ -18,7 +18,7 @@ export const gameDetails = {
     desc: 'Welcome to the world of... here are some quick rules & concepts...',
     author: 'Jake McCarthy',
     cohort: 'PTSDB-MAY-2023',
-    startingRoomDescription: 'What you see before you is...',
+    startingRoomDescription: 'What you see before you is....',
     playerCommands: [
         // replace these with your games commands as needed
         'inspect', 'view', 'look', 'take', 'drop'
