@@ -116,11 +116,23 @@ const conservatory = new Room(
 //* State Machine for Locations
 
 const availableExits = {
-    'foyer': ['living room'],
-    'living room': ['foyer', 'kitchen'],
-    'kitchen': ['living room', 'conservatory'],
-    'conservatory': ['kitchen']
+    foyer: ['livingRoom'],
+    livingRoom: ['foyer', 'kitchen'],
+    kitchen: ['livingRoom', 'conservatory'],
+    conservatory: ['kitchen']
 }
+
+const locationLookUp = {
+    foyer,
+    livingRoom,
+    kitchen,
+    conservatory
+};
+
+
+// console.log(currentRoom);
+console.log(currentRoom.name);
+
 
 //! Items Construction
 
@@ -164,17 +176,42 @@ const brooch = new Item(
 
 let startRoom = foyer;
 let currentRoom = startRoom;
-playerInput = playerInput.toLowerCase();
+
+//! Input Parser
+
+playerInput = playerInput.toLowerCase().trim();
+let inputArr = playerInput.split(" "); //* creates ARRAY `inputArr`
+
+let action = inputArr[0];   //* deconstructs ARRAY `inputArr`
+let target = inputArr.slice(1).join(" ");   //* deconstructs ARRAY `inputArr`
+
+console.log(inputArr);
+console.log(`parsed 'Action: "${action}"`);
+console.log(`parsed 'Target: "${target}"`);
+
+//! ________________________________________________________________ //SECTION 
 
     if(playerInput == "test") {
         textReply = `You typed '${playerInput.toUpperCase()}'.`
         console.log(textReply);
         return textReply;
     } else if (playerInput === "look") {
-        // console.log(currentRoom.inventory);
-        console.log(currentRoom.availableExits);
-        textReply = `You are in the ${currentRoom.name}. ${currentRoom.description} Available exits: ${availableExits[currentRoom.name.toLowerCase()]}`
+        console.log(`Current Room => "${currentRoom.name}".`);
+    
+        // Get the names of available exits
+        let exits = availableExits[currentRoom.name.toLowerCase()].map(exit => {
+            return locationStates[exit].name;
+        });
+    
+        console.log(`Available Exits: "${exits}".`);
+        textReply = `You are in the ${currentRoom.name}. ${currentRoom.description} Available exits: ${exits.join(", ")}`;
+        console.log(getValidDirections(currentRoom));
         console.log(textReply);
+    
+        // let exitsCaps = availableExits[currentRoom.name.toLowerCase()];
+        // exitsCaps = exitsCaps.toUpperCase();
+        // console.log(textReply);
+        // console.log(exitsCaps);
         return textReply;
     } else if (playerInput === "north" || playerInput === "living room") {
         textReply = `You typed ${playerInput}.`
@@ -188,5 +225,10 @@ playerInput = playerInput.toLowerCase();
 
     // console.log(`Typed Input: ${playerInput}`);
 
-
+function getValidDirections(room) {
+    let validExits = availableExits[room.name.toLowerCase()];
+    let exitNames = validExits.map(exit => locationLookUp[exit].name);
+    console.log(exitNames);
+}
+    
 } 
