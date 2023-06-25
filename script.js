@@ -76,18 +76,29 @@ export const domDisplay = (playerInput) => {
             this.south= null;
             this.east= null;
             this.west= null;
+            this.exits = {};
             this.destroyed = null;
-        }
+        };
+
+        addExit(direction, room) {
+            this.exits[direction] = room; // add room[direction] as an exit
+            this.exits[room.name.toLowerCase()] = room; // Add room.name as an exit
+        };
+
+        getExit(direction) {
+            return this.exits[direction];
+        };
 
         addItem(item) {
+            this.inventory.push(item); // push this item to room inventory
+        };
 
-        }
-
-        removeItem () {
-
-        }
-
-    }
+        removeItem(item) {
+            let index = this.inventory.indexOf(item); // gets index of item from room
+            if (index > -1) {   // as long as room inventory array is not empty
+                this.inventory.splice(index, 1); // splices the item from this.inventory array starting with the item's index, then 1 item
+        }};
+    };
 
 
 //! Rooms List
@@ -95,22 +106,29 @@ export const domDisplay = (playerInput) => {
 const foyer = new Room(
     "Foyer",
     "You are in a grand foyer with a beautiful chandelier hanging from the ceiling. There is a living room to the north and a kitchen east of the living room."
-)
+);
 
 const livingRoom = new Room(
     "Living Room",
     "You are in a cozy sitting area with a fireplace and comfortable chairs. To the south is the Foyer. To the east is the Kitchen. There is a vague scent of pine and sandalwood here."
-)
+);
 
 const kitchen = new Room(
     "Kitchen",
     "You are in a spacious kitchen with somewhat dated appliances. The appliances have strange modifications to them including various metal coils, wires and glass tubes, without apparent purpose. To the east is the Conservatory. To the west is the Living Room."
-)
+);
 
 const conservatory = new Room(
     "Conservatory",
     "You are in a conservatory with lots of stained glass and pebbled windows. Light filters through, although you cannot discern what is directly outside. There are many plants, unusual flowers and even a few trees in huge pots. To the west is the Kitchen."
-)
+);
+
+//* Connect the Rooms
+
+foyer.addExit("north", livingRoom);
+foyer.addExit("living room", livingRoom); // Connect using room name
+
+
 
 
 //* State Machine for Locations
@@ -129,9 +147,11 @@ const locationLookUp = {
     conservatory
 };
 
+let startRoom = foyer;
+let currentRoom = startRoom;
 
 // console.log(currentRoom);
-console.log(currentRoom.name);
+console.log(`CURRENTROOM.NAME = ${currentRoom.name}`);
 
 
 //! Items Construction
@@ -174,8 +194,6 @@ const brooch = new Item(
 
 //! Game Play
 
-let startRoom = foyer;
-let currentRoom = startRoom;
 
 //! Input Parser
 
@@ -200,7 +218,9 @@ console.log(`parsed 'Target: "${target}"`);
     
         // Get the names of available exits
         let exits = availableExits[currentRoom.name.toLowerCase()].map(exit => {
-            return locationStates[exit].name;
+            console.log(`availableExits.name[exit].name: ${availableExits[exit].name}`);
+            console.log (availableExits[exit].name);
+            return availableExits[exit].name;
         });
     
         console.log(`Available Exits: "${exits}".`);
@@ -225,10 +245,10 @@ console.log(`parsed 'Target: "${target}"`);
 
     // console.log(`Typed Input: ${playerInput}`);
 
-function getValidDirections(room) {
-    let validExits = availableExits[room.name.toLowerCase()];
-    let exitNames = validExits.map(exit => locationLookUp[exit].name);
-    console.log(exitNames);
-}
+    function getValidDirections(room) {
+        let validExits = availableExits[room.name.toLowerCase()];
+        let exitNames = validExits.map(exit => locationLookUp[exit].name);
+        console.log(`exitNames = ${exitNames}`);
+    }
     
 } 
