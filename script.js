@@ -15,13 +15,13 @@
 
 export const gameDetails = {
     title: 'Zorkington Galaxy',
-    desc: 'Welcome to the world of... here are some quick rules & concepts...',
+    desc: 'Welcome to the world of Zorkington Galaxy here are some quick rules & concepts...\nA thing isn\'t always a thing until it is activated or used. Explore your world. "To see the world, things dangerous to come to, to see behind walls, draw closer, to find each other, and to feel. That is the purpose of life."',
     author: 'Jake McCarthy',
     cohort: 'PTSDB-MAY-2023',
     startingRoomDescription: "You are in a grand foyer with a beautiful chandelier hanging from the ceiling. There is a living room to the north and a kitchen east of the living room.",
     playerCommands: [
         // replace these with your games commands as needed
-        'look (or l)', 'inventory (or i)', 'take', 'drop', 'examine', 'north', 'south', 'east', 'west', 'help', 'quit'
+        'look (or l)', 'inventory (or i)', 'take (item)', 'drop (item)', 'examine (item)', 'north', 'south', 'east', 'west', 'help', 'quit'
     ]
     // Commands are basic things that a player can do throughout the game besides possibly moving to another room. This line will populate on the footer of your game for players to reference. 
     // This shouldn't be more than 6-8 different commands.
@@ -72,22 +72,22 @@ class Item {
 
 const foyer = new Room(
     "Foyer",
-    "You are in a grand foyer with a beautiful chandelier hanging from the ceiling. There is a living room to the north and a kitchen east of the living room."
+    "You are in a grand foyer with a beautiful chandelier hanging from the ceiling. Briefly there is a feeling of static electricity in the air, then it is gone. There is a living room to the north and a kitchen east of the living room."
 );
 
 const livingRoom = new Room(
     "Living Room",
-    "You are in a cozy living room with a fireplace and comfortable chairs. To the south is the Foyer. To the east is the Kitchen."
+    "You are in a cozy sitting area with a fireplace and soft, comfortable chairs. There is a vague scent of pine and sandalwood here. To the south is the Foyer. To the east is the Kitchen."
 );
 
 const kitchen = new Room(
     "Kitchen",
-    "You are in a spacious kitchen with modern appliances and granite countertops. To the east is the Conservatory. To the west is the Living Room."
+    "You are in a spacious kitchen with somewhat dated appliances. The appliances have strange modifications to them including various metal coils, wires and glass tubes, without apparent purpose. To the east is the Conservatory. To the west is the Living Room."
 );
 
 const conservatory = new Room(
     "Conservatory",
-    "You are in a conservatory with lots of stained glass and pebbled windows. There are many plants, flowers, and even a few trees in huge pots. To the west is the kitchen."
+    "You are in a conservatory with lots of stained glass and pebbled windows. Light filters through, although you cannot discern what is directly outside. There are many plants, unusual flowers and even a few trees in huge pots. There is an earthy scent peppered with floral accents that is entirely pleasant. To the west is the Kitchen."
 );
 
 //* Connect the Rooms ----------------------------------------------->
@@ -103,31 +103,31 @@ conservatory.west = kitchen;  //  adds to conservatory this.west value A) west e
 
 const silverKey = new Item(
     "Silver Key",
-    "A shiny metal skeleton key.",
+    "A shiny metal skeleton key. Closer examination of the silver key reveals the 'bow' of the key to be in the shape of a coat button with four small holes.",
     true
 );
 
 const screwdriver = new Item(
     "Screwdriver",
-    "A tool with a flat head and a magnetic tip.",
-    true
+    "A tool with a flat head and a magnetic tip. But the tip also contains a curse. Handle with care.",
+    false
 );
 
 const note = new Item(
     "Note",
-    "A loose piece of paper with some writing on it.",
+    "A loose piece of paper with some writing on it: 'My stars shine darkly over me: the malignancy of my fate might perhaps distemper yours; decide your beginning. A figure is scrawled below the writing that looks like a hastily drawn tree with a caption that reads, 'object_Object'",
     true
 );
 
 const brooch = new Item(
     "Brooch",
-    "A delicate gold filigree brooch in the shape of a leaf with green accents.",
+    "A delicate gold filigree brooch in the shape of a leaf with emerald green accents.",
     true
 );
 
 const mirror = new Item(
     "Mirror",
-    "A small opalescent mirror with a large crack through it.",
+    "A small opalescent mirror with a large crack through it. The mirror has a hangtag on it, which reads: \"'Mirrors,' she said, 'are never to be trusted.'",
     false
 );
 
@@ -140,13 +140,19 @@ const knife = new Item(
 const horn = new Item(
     "Horn",
     "A conspicuously tiny palm-sized representation of a tuba.",
-    false
+    true
 );
 
 const bottle = new Item(
     "Bottle",
     "An old glass bottle with a crystal stopper. The bottle contains a blue liquid.",
     false
+);
+
+const device = new Item(
+    "Device",
+    "A label reads: 'Illudium Pew-36 Explosive Space Modulator'; a red cylindrical device, clearly of Martian origin; it remains inert however. Probably not important.",
+    true
 );
 
 //* Push Items To Rooms ------------------------------------------------------------>
@@ -157,6 +163,7 @@ livingRoom.addItem(screwdriver);
 livingRoom.addItem(horn);
 kitchen.addItem(silverKey);
 kitchen.addItem(bottle);
+kitchen.addItem(device);
 conservatory.addItem(brooch);
 conservatory.addItem(mirror);
 
@@ -253,9 +260,36 @@ export const domDisplay = (playerInput) => {
         //FIXME:  ^^ NEED LOGIC: IF ROOM INVENTORY IS EMPTY, DON'T LIST THE 'CONTAINS' STATEMENT. ^^ //
 
 
+    } else if (action === "take" || action === "get") {   //* could also use: `if (["take", "get"].includes(action)) {`
+        const foundItem = currentRoom.inventory.find(    // compares item if in currentRoom.inventory using FIND method
+            (i) => i.name.toLowerCase() === target        // using the .tolowerCase
+        );
+        if (foundItem && foundItem.takeable) {  // if foundItem exists && foundItem has a .takeable truthy value (not null, undefined, NaN, 0)
+            currentRoom.removeItem(foundItem); // removeItem method of Room to avoid case sensitivity in user input
+            playerInventory.push(foundItem); // pushes item to playerInventory (not a declared method)
+            console.log(`You picked up the ${foundItem.name}.`);
+            console.log(
+                // `Intial examination of the ${foundItem.name} reveals: ${foundItem.description}`
+            );
+
+            textReply = `You picked up the ${foundItem.name}.\n`
+                // Initial examination of the ${foundItem.name} reveals: ${foundItem.description}`;
+            return textReply;
+        } else {
+            console.log(`You can't take the ${target}. Perhaps it is cursed?`);
+            textReply = `You can't take the ${target}. Perhaps it is cursed?`;
+            return textReply;
+        }   
+    } else {
+        console.log("Invalid command, type 'help' for a list of commands.");
+
+        textReply = "Invalid command, type 'help' for a list of commands.";
+        return textReply;
+    }
+};
 
 function getValidDirections(room) {
-    let validDirections = []; // resets obj every time, then fills with updated valid directions
+    let validDirections = []; // resets array every time, then fills with updated valid directions
     if (room.north) {         // if room.north has a valid value (other than null, undefined, 0, NaN) then: 
         validDirections.push("north");
     }
