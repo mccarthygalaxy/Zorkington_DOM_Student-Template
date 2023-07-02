@@ -279,13 +279,29 @@ export const domDisplay = (playerInput) => {
             console.log(`You can't take the ${target}. Perhaps it is cursed?`);
             textReply = `You can't take the ${target}. Perhaps it is cursed?`;
             return textReply;
-        }   
+        }
+    } else if (action === "north" && currentRoom.north || action === "n" && currentRoom.north) { // if action is `north` and currentRoom.north (exists) then {}
+        currentRoom = currentRoom.north; // assign the value inside currentRoom.north to currentRoom 
+        console.log(currentRoom.name.toUpperCase());
+        console.log(currentRoom.description);
+        console.log(`Directions: ${getValidDirections(currentRoom).join(", ").toUpperCase()}`); //
+
+        textReply = `${currentRoom.name.toUpperCase()}\n
+                ${currentRoom.description}\n
+                Directions: ${getValidDirections(currentRoom).join(", ").toUpperCase()}`;
+        return textReply;
+    
+
+
     } else {
         console.log("Invalid command, type 'help' for a list of commands.");
 
         textReply = "Invalid command, type 'help' for a list of commands.";
         return textReply;
     }
+
+
+
 };
 
 function getValidDirections(room) {
