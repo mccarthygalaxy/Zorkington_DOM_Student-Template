@@ -21,7 +21,7 @@ export const gameDetails = {
     startingRoomDescription: "You are in a grand foyer with a beautiful chandelier hanging from the ceiling. There is a living room to the north and a kitchen east of the living room.",
     playerCommands: [
         // replace these with your games commands as needed
-        'look (or l)', 'inventory (or i)', 'take (item)', 'drop (item)', 'examine (item)', 'north', 'south', 'east', 'west', 'help', 'quit'
+        'look (or l)', 'inventory (or i)', 'take [item]', 'examine (or ex) [item]', 'drop [item]', 'north', 'south', 'east', 'west', 'help', 'quit'
     ]
     // Commands are basic things that a player can do throughout the game besides possibly moving to another room. This line will populate on the footer of your game for players to reference. 
     // This shouldn't be more than 6-8 different commands.
@@ -92,12 +92,12 @@ const conservatory = new Room(
 
 //* Connect the Rooms ----------------------------------------------->
 
-foyer.north = livingRoom;   // adds to foyer this.north value A) north exists and B) livingRoom is north of foyer
-livingRoom.south = foyer;   // adds to livingRoom this.south value A) south exists and B) foyer is south of livingRoom
-livingRoom.east = kitchen;    // adds to livingRoom this.east value A) east exists and B) kitchen is east of livingRoom
-kitchen.east = conservatory;  //  adds to kitchen this.east value A) east exists and B) conservatory is east of kitchen
-kitchen.west = livingRoom;    //  adds to kitchen this.west value A) west exists and B)livingRoom is west of kitchen
-conservatory.west = kitchen;  //  adds to conservatory this.west value A) west exists and B) kitchen is west of conservatory
+foyer.north = livingRoom;   // adds to foyer this.north value A) north "exists" and B) livingRoom is north of foyer
+livingRoom.south = foyer;   // adds to livingRoom this.south value A) south "exists" and B) foyer is south of livingRoom
+livingRoom.east = kitchen;    // adds to livingRoom this.east value A) east "exists" and B) kitchen is east of livingRoom
+kitchen.east = conservatory;  //  adds to kitchen this.east value A) east "exists" and B) conservatory is east of kitchen
+kitchen.west = livingRoom;    //  adds to kitchen this.west value A) west "exists" and B)livingRoom is west of kitchen
+conservatory.west = kitchen;  //  adds to conservatory this.west value A) west "exists" and B) kitchen is west of conservatory
 
 //! Create new instances of Items -------------------------------------------->
 
@@ -139,7 +139,7 @@ const knife = new Item(
 
 const horn = new Item(
     "Horn",
-    "A conspicuously tiny, palm-sized representation of a tuba.",
+    "A conspicuously tiny, palm-sized representation of a tuba. Engraved on the tiny tuba is the phrase, \"In eodem flumine nemo bis vestigiat...\". Which, before your very eyes, transforms into English: \"No man ever steps in the same river twice...\"",
     true
 );
 
@@ -170,7 +170,7 @@ conservatory.addItem(mirror);
 //? Assign & Reset Player basics -------------------------------------------------->
 
 let playerInventory = [];
-let currentRoom = foyer; // Game start - Assigns currentRoom variable and sets to foyer (instance of Room class)
+let currentRoom = foyer;
 
 //! DOM DISPLAY FUNCTIONALITY ------------------------------------------------------>
 
@@ -208,7 +208,6 @@ export const domDisplay = (playerInput) => {
 
     // Your code here
 
-
     //! Game Input ------------------------------------------------------>
 
 
@@ -224,28 +223,15 @@ export const domDisplay = (playerInput) => {
     console.log(`parsed 'Action: "${action}"`);
     console.log(`parsed 'Target: "${target}"`);
 
-    //! Game Play ------------------------------------------------------>
+    //SECTION Game Play ------------------------------------------------------>
 
-    console.log(`${currentRoom.name.toUpperCase()}\n${currentRoom.description}`); //  gets .description from instance of Room class
-    console.log(`Directions: ${getValidDirections(currentRoom).join(", ").toUpperCase()}`); // calls f using (currentRoom), tells which ways you can move
-    // joins these [from an obj/array] separated by ", "
+    if (action === "quit" || action === "exit") {   // begin examination of ACTION
 
-    if (action === "quit" || action === "exit") {                // begin examination of ACTION
-        console.log("Thanks for playing!");
         textReply = "Thanks for playing!";
         return textReply;
 
 
     } else if (action === "look" || action === "l") {
-        console.log(currentRoom.name.toUpperCase());
-        console.log(currentRoom.description);
-        console.log(`Directions: ${getValidDirections(currentRoom) // Show exits from currentRoom using array from getValidDirections function
-            .join(", ").toUpperCase()}`);                                           // concatenating with ", " into a string. 
-        console.log(
-            `The room contains a: ${currentRoom.inventory
-                .map((i) => i.name) // map iterates arrow function that gets .name value of every `i` argument
-                .join(", ")}`
-        ); // Show items here
 
         textReply = `${currentRoom.name.toUpperCase()}\n
                 ${currentRoom.description}\n
@@ -256,31 +242,26 @@ export const domDisplay = (playerInput) => {
                 .join(", ")}.`
         return textReply;
 
-
         //FIXME:  ^^ NEED LOGIC: IF ROOM INVENTORY IS EMPTY, DON'T LIST THE 'CONTAINS' STATEMENT. ^^ //
 
 
     } else if (action === "take" || action === "get") {   //* could also use: `if (["take", "get"].includes(action)) {`
         const foundItem = currentRoom.inventory.find(    // compares item if in currentRoom.inventory using FIND method
-            (i) => i.name.toLowerCase() === target        // using the .tolowerCase
+            (i) => i.name.toLowerCase() === target
         );
-        if (foundItem && foundItem.takeable) {  // if foundItem exists && foundItem has a .takeable truthy value (not null, undefined, NaN, 0)
+        if (foundItem && foundItem.takeable) {  // if foundItem exists && foundItem has a .takeable truthy value
+
             currentRoom.removeItem(foundItem); // removeItem method of Room to avoid case sensitivity in user input
             playerInventory.push(foundItem); // pushes item to playerInventory (not a declared method)
-            console.log(`You picked up the ${foundItem.name}.`);
-            console.log(
-                // `Intial examination of the ${foundItem.name} reveals: ${foundItem.description}`
-            );
 
             textReply = `You picked up the ${foundItem.name}.\n`
-            // Initial examination of the ${foundItem.name} reveals: ${foundItem.description}`;
             return textReply;
         } else {
-            console.log(`You can't take the ${target}. Perhaps it is cursed?`);
             textReply = `You can't take the ${target}. Perhaps it is cursed?`;
             return textReply;
         }
-    } else if (action === "examine" || action === "ex") { 
+
+    } else if (action === "examine" || action === "ex") {
         const itemTBE = currentRoom.inventory.find( // Item ToBeExamined
             (i) => i.name.toLowerCase() === target
         );
@@ -289,27 +270,21 @@ export const domDisplay = (playerInput) => {
         );
 
         if (itemTBE) {
-            console.log(`Examination of the ${itemTBE.name} reveals: ${itemTBE.description}`);
             textReply = `Examination of the ${itemTBE.name} reveals: ${itemTBE.description}`
             return textReply;
-        } else if (itemTBEinI) {  
-            console.log(`Examination of the ${itemTBEinI.name} reveals: ${itemTBEinI.description}`);
+        } else if (itemTBEinI) {
             textReply = `Examination of the ${itemTBEinI.name} reveals: ${itemTBEinI.description}`
             return textReply;
         } else {
-            console.log(`You can't examine the ${target}. I don't see one here.`);
             textReply = `You can't examine the ${target}. I don't see one here.`;
             return textReply;
         };
+
     } else if (action === "inventory" || action === "i") {
         if (playerInventory.length > 0) {
-            console.log(
-                `Inventory: ${playerInventory.map((things) => things.name).join(", ")}` // map() over playerInventory; map returns a new array of .name (s)
-            );  // Concatenates the playerInventory arr into a string with ", " separators
 
-            textReply = `Inventory: ${playerInventory.map((things) => things.name).join(", ")}`
+            textReply = `Inventory: ${playerInventory.map((things) => things.name).join(", ")}` // map() over playerInventory; map returns a new array of .name (s) -- Concatenates the playerInventory arr into a stringwith ", " separators
             return textReply;
-
         } else {
             textReply = `Inventory: Empty (It seems you are not very materialistic.)`
             return textReply;
@@ -318,11 +293,9 @@ export const domDisplay = (playerInput) => {
         const itemTBDr = playerInventory.find(
             (i) => i.name.toLowerCase() === target
         );
-        if (itemTBDr) { // in this case, checks if `item` exists i.e. is not falsey (null, undefined, NaN, 0) "if `item` exists {then..."
+        if (itemTBDr) { // in this case, checks if `item` exists i.e. is not falsey: "if `item` exists {then..."
             currentRoom.addItem(itemTBDr);
             playerInventory = playerInventory.filter((i) => i !== itemTBDr); // .filter on playerInventory, weeding out values that === the item
-            console.log(`You dropped ${itemTBDr.name}.`);
-
             textReply = `You dropped ${itemTBDr.name}.`
             return textReply;
         } else {
@@ -332,18 +305,12 @@ export const domDisplay = (playerInput) => {
         }
 
     } else if (action === "help") { // HELP Menu gives list of all commands and how to use them. //
-        console.log(
-            "You can use the following commands: \n- 'LOOK': to look around the room\n- 'EXAMINE' [item]: to look at the description of an item\n- 'TAKE' [item]: to pick up an item\n- 'DROP' [item]: to drop an item\n- 'INVENTORY': to see your inventory\n - 'NORTH' / 'SOUTH' / 'EAST' / 'WEST': to move in that direction\n- 'HELP': to display this help message\n- 'QUIT': to quit the game"
-        );
 
-        textReply = "You can use the following commands: \n- look: to look around the room\n- examine [item]: to look at the description of an item\n- take [item]: to pick up an item\n- drop [item]: to drop an item\n- inventory: to see your inventory\n- north/south/east/west: to move in that direction\n- help: to display this help message\n- quit: to quit the game.";
+        textReply = "You can use the following commands: \n- 'LOOK': to look around the room\n- 'EXAMINE' [item]: to look at the description of an item\n- 'TAKE' [item]: to pick up an item\n- 'DROP' [item]: to drop an item\n- 'INVENTORY': to see your inventory\n - 'NORTH' / 'SOUTH' / 'EAST' / 'WEST': to move in that direction\n- 'HELP': to display this help message\n- 'QUIT': to quit the game.";
         return textReply;
 
     } else if (action === "north" && currentRoom.north || action === "n" && currentRoom.north) { // if action is `north` and currentRoom.north (exists) then {}
         currentRoom = currentRoom.north; // assign the value inside currentRoom.north to currentRoom 
-        console.log(currentRoom.name.toUpperCase());
-        console.log(currentRoom.description);
-        console.log(`Directions: ${getValidDirections(currentRoom).join(", ").toUpperCase()}`); //
 
         textReply = `${currentRoom.name.toUpperCase()}\n
                 ${currentRoom.description}\n
@@ -352,9 +319,6 @@ export const domDisplay = (playerInput) => {
 
     } else if (action === "south" && currentRoom.south || action === "s" && currentRoom.south) {
         currentRoom = currentRoom.south;
-        console.log(currentRoom.name.toUpperCase());
-        console.log(currentRoom.description);
-        console.log(`Directions: ${getValidDirections(currentRoom).join(", ").toUpperCase()}`); //
 
         textReply = `${currentRoom.name.toUpperCase()}\n
                 ${currentRoom.description}\n
@@ -363,9 +327,6 @@ export const domDisplay = (playerInput) => {
 
     } else if (action === "east" && currentRoom.east || action === "e" && currentRoom.east) {
         currentRoom = currentRoom.east;
-        console.log(currentRoom.name.toUpperCase());
-        console.log(currentRoom.description);
-        console.log(`Directions: ${getValidDirections(currentRoom).join(", ").toUpperCase()}`); //
 
         textReply = `${currentRoom.name.toUpperCase()}\n
                 ${currentRoom.description}\n
@@ -374,50 +335,46 @@ export const domDisplay = (playerInput) => {
 
     } else if (action === "west" && currentRoom.west || action === "w" && currentRoom.west) {
         currentRoom = currentRoom.west;
-        console.log(currentRoom.name.toUpperCase());
-        console.log(currentRoom.description);
-        console.log(`Directions: ${getValidDirections(currentRoom).join(", ").toUpperCase()}`); //
 
         textReply = `${currentRoom.name.toUpperCase()}\n
                 ${currentRoom.description}\n
                 Directions: ${getValidDirections(currentRoom).join(", ").toUpperCase()}`;
         return textReply;
 
-        //* FIXED! OTHER OPTION FOR MESSAGE IF INVALID DIRECTION IS INPUT RATHER THAN GENERIC ERROR: //
 
+        //* Specific error message for invalid direction/move:
     } else if (action === "north" && !currentRoom.north || action === "n" && !currentRoom.north ||
-    action === "south" && !currentRoom.south || action === "s" && !currentRoom.south ||
-    action === "east" && !currentRoom.east || action === "e" && !currentRoom.east ||
-    action === "west" && !currentRoom.west || action === "w" && !currentRoom.west) {
+        action === "south" && !currentRoom.south || action === "s" && !currentRoom.south ||
+        action === "east" && !currentRoom.east || action === "e" && !currentRoom.east ||
+        action === "west" && !currentRoom.west || action === "w" && !currentRoom.west) {
 
-    console.log("Invalid DIRECTION, try looking for another direction.");
-
-    textReply = "Invalid DIRECTION, try looking for another direction.";
-    return textReply;
+        textReply = "Invalid DIRECTION, try looking for another direction.";
+        return textReply;
 
     } else {
-        console.log("Invalid command, type 'help' for a list of commands.");
 
         textReply = "Invalid command, type 'help' for a list of commands.";
         return textReply;
     }
-
-
+    //SECTION End Game Play --------------------------------------------------^
 
 };
 
+//! END DOM DISPLAY FUNCTIONALITY --------------------------------------------------^
+
 function getValidDirections(room) {
     let validDirections = []; // resets array every time, then fills with updated valid directions
+
     if (room.north) {         // if room.north has a valid value (other than null, undefined, 0, NaN) then: 
         validDirections.push("north");
     }
-    if (room.south) {         // if room.south has a valid value (other than null, undefined, 0, NaN) then:
+    if (room.south) {         // if room.south has a valid value then:
         validDirections.push("south");
     }
-    if (room.east) {          // if room.east has a valid value (other than null, undefined, 0, NaN) then:
+    if (room.east) {          // if room.east has a valid value then:
         validDirections.push("east");
     }
-    if (room.west) {          // if room.west has a valid value (other than null, undefined, 0, NaN) then:
+    if (room.west) {          // if room.west has a valid value then:
         validDirections.push("west");
     }
     return validDirections;   // returns an array with all possible exits from current room

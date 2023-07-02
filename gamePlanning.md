@@ -6,25 +6,25 @@
 * name
 * description
 * takeable? (T/F)
-* special status? (activated?)
+* ~~special status? (activated?)~~ //TODO - !TBD later
 
 ### Rooms
 * name
 * description
 * room inventory
-* locked? (T/F)
+*  ~~locked? (T/F)~~ //TODO - !TBD later
+* ~~special status (room has been blown up by game incident, etc)~~ //TODO - !TBD later
 * valid directions to move
-* special status (room has been blown up by game incident, etc)
 
 ### Player
 * personal inventory
     - take item
     - drop item
-* special status (affected by item temporarily, etc)
+* ~~special status (affected by item temporarily, etc)~~ //TODO - !TBD later
 
 <hr>
 
-## Objects
+## ~~Objects~~ //! Use ARRAYS for now.
 * Classes
     - Rooms
         - addItem
