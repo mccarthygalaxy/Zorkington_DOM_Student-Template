@@ -290,8 +290,42 @@ export const domDisplay = (playerInput) => {
                 ${currentRoom.description}\n
                 Directions: ${getValidDirections(currentRoom).join(", ").toUpperCase()}`;
         return textReply;
-    
 
+    } else if (action === "south" && currentRoom.south || action === "s"  && currentRoom.south) {
+        currentRoom = currentRoom.south;
+        console.log(currentRoom.name.toUpperCase());
+        console.log(currentRoom.description);
+        console.log(`Directions: ${getValidDirections(currentRoom).join(", ").toUpperCase()}`); //
+
+        textReply = `${currentRoom.name.toUpperCase()}\n
+                ${currentRoom.description}\n
+                Directions: ${getValidDirections(currentRoom).join(", ").toUpperCase()}`;
+        return textReply;
+
+    } else if (action === "east" && currentRoom.east || action === "e"  && currentRoom.east) {
+        currentRoom = currentRoom.east;
+        console.log(currentRoom.name.toUpperCase());
+        console.log(currentRoom.description);
+        console.log(`Directions: ${getValidDirections(currentRoom).join(", ").toUpperCase()}`); //
+
+        textReply = `${currentRoom.name.toUpperCase()}\n
+                ${currentRoom.description}\n
+                Directions: ${getValidDirections(currentRoom).join(", ").toUpperCase()}`;
+        return textReply;
+
+    } else if (action === "west" && currentRoom.west || action === "w" && currentRoom.west) {
+        currentRoom = currentRoom.west;
+        console.log(currentRoom.name.toUpperCase());
+        console.log(currentRoom.description);
+        console.log(`Directions: ${getValidDirections(currentRoom).join(", ").toUpperCase()}`); //
+
+        textReply = `${currentRoom.name.toUpperCase()}\n
+                ${currentRoom.description}\n
+                Directions: ${getValidDirections(currentRoom).join(", ").toUpperCase()}`;
+        return textReply;
+
+        //FIXME: FIXED! NEED ANOTHER OPTION FOR MESSAGE IF INVALID DIRECTION IS INPUT RATHER THAN GENERIC ERROR //
+    
 
     } else {
         console.log("Invalid command, type 'help' for a list of commands.");
