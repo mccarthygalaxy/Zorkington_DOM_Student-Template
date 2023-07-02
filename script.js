@@ -273,13 +273,39 @@ export const domDisplay = (playerInput) => {
             );
 
             textReply = `You picked up the ${foundItem.name}.\n`
-                // Initial examination of the ${foundItem.name} reveals: ${foundItem.description}`;
+            // Initial examination of the ${foundItem.name} reveals: ${foundItem.description}`;
             return textReply;
         } else {
             console.log(`You can't take the ${target}. Perhaps it is cursed?`);
             textReply = `You can't take the ${target}. Perhaps it is cursed?`;
             return textReply;
         }
+    } else if (action === "drop") {
+        const itemTBDr = playerInventory.find(
+            (i) => i.name.toLowerCase() === target
+        );
+        if (itemTBDr) { // in this case, checks if `item` exists i.e. is not falsey (null, undefined, NaN, 0) "if `item` exists {then..."
+            currentRoom.addItem(itemTBDr);
+            playerInventory = playerInventory.filter((i) => i !== itemTBDr); // .filter on playerInventory, weeding out values that === the item
+            console.log(`You dropped ${itemTBDr.name}.`);
+
+            textReply = `You dropped ${itemTBDr.name}.`
+            return textReply;
+        } else {
+            console.log(`You don't have ${target} in your inventory.`);
+            textReply = `You don't have ${target} in your inventory.`;
+            return textReply;
+        }
+
+    } else if (action === "help") { // HELP Menu gives list of all commands and how to use them. //
+        console.log(
+            "You can use the following commands: \n- 'LOOK': to look around the room\n- 'EXAMINE' [item]: to look at the description of an item\n- 'TAKE' [item]: to pick up an item\n- 'DROP' [item]: to drop an item\n- 'INVENTORY': to see your inventory\n - 'NORTH' / 'SOUTH' / 'EAST' / 'WEST': to move in that direction\n- 'HELP': to display this help message\n- 'QUIT': to quit the game"
+
+        );
+
+        textReply = "You can use the following commands: \n- look: to look around the room\n- examine [item]: to look at the description of an item\n- take [item]: to pick up an item\n- drop [item]: to drop an item\n- inventory: to see your inventory\n- north/south/east/west: to move in that direction\n- help: to display this help message\n- quit: to quit the game.";
+        return textReply;
+
     } else if (action === "north" && currentRoom.north || action === "n" && currentRoom.north) { // if action is `north` and currentRoom.north (exists) then {}
         currentRoom = currentRoom.north; // assign the value inside currentRoom.north to currentRoom 
         console.log(currentRoom.name.toUpperCase());
@@ -291,7 +317,7 @@ export const domDisplay = (playerInput) => {
                 Directions: ${getValidDirections(currentRoom).join(", ").toUpperCase()}`;
         return textReply;
 
-    } else if (action === "south" && currentRoom.south || action === "s"  && currentRoom.south) {
+    } else if (action === "south" && currentRoom.south || action === "s" && currentRoom.south) {
         currentRoom = currentRoom.south;
         console.log(currentRoom.name.toUpperCase());
         console.log(currentRoom.description);
@@ -302,7 +328,7 @@ export const domDisplay = (playerInput) => {
                 Directions: ${getValidDirections(currentRoom).join(", ").toUpperCase()}`;
         return textReply;
 
-    } else if (action === "east" && currentRoom.east || action === "e"  && currentRoom.east) {
+    } else if (action === "east" && currentRoom.east || action === "e" && currentRoom.east) {
         currentRoom = currentRoom.east;
         console.log(currentRoom.name.toUpperCase());
         console.log(currentRoom.description);
@@ -325,7 +351,7 @@ export const domDisplay = (playerInput) => {
         return textReply;
 
         //FIXME: FIXED! NEED ANOTHER OPTION FOR MESSAGE IF INVALID DIRECTION IS INPUT RATHER THAN GENERIC ERROR //
-    
+
 
     } else {
         console.log("Invalid command, type 'help' for a list of commands.");
