@@ -280,6 +280,40 @@ export const domDisplay = (playerInput) => {
             textReply = `You can't take the ${target}. Perhaps it is cursed?`;
             return textReply;
         }
+    } else if (action === "examine" || action === "ex") { 
+        const itemTBE = currentRoom.inventory.find( // Item ToBeExamined
+            (i) => i.name.toLowerCase() === target
+        );
+        const itemTBEinI = playerInventory.find(    // Item ToBeExaminedinInventory
+            (i) => i.name.toLowerCase() === target
+        );
+
+        if (itemTBE) {
+            console.log(`Examination of the ${itemTBE.name} reveals: ${itemTBE.description}`);
+            textReply = `Examination of the ${itemTBE.name} reveals: ${itemTBE.description}`
+            return textReply;
+        } else if (itemTBEinI) {  
+            console.log(`Examination of the ${itemTBEinI.name} reveals: ${itemTBEinI.description}`);
+            textReply = `Examination of the ${itemTBEinI.name} reveals: ${itemTBEinI.description}`
+            return textReply;
+        } else {
+            console.log(`You can't examine the ${target}. I don't see one here.`);
+            textReply = `You can't examine the ${target}. I don't see one here.`;
+            return textReply;
+        };
+    } else if (action === "inventory" || action === "i") {
+        if (playerInventory.length > 0) {
+            console.log(
+                `Inventory: ${playerInventory.map((things) => things.name).join(", ")}` // map() over playerInventory; map returns a new array of .name (s)
+            );  // Concatenates the playerInventory arr into a string with ", " separators
+
+            textReply = `Inventory: ${playerInventory.map((things) => things.name).join(", ")}`
+            return textReply;
+
+        } else {
+            textReply = `Inventory: Empty (It seems you are not very materialistic.)`
+            return textReply;
+        }
     } else if (action === "drop") {
         const itemTBDr = playerInventory.find(
             (i) => i.name.toLowerCase() === target
@@ -300,7 +334,6 @@ export const domDisplay = (playerInput) => {
     } else if (action === "help") { // HELP Menu gives list of all commands and how to use them. //
         console.log(
             "You can use the following commands: \n- 'LOOK': to look around the room\n- 'EXAMINE' [item]: to look at the description of an item\n- 'TAKE' [item]: to pick up an item\n- 'DROP' [item]: to drop an item\n- 'INVENTORY': to see your inventory\n - 'NORTH' / 'SOUTH' / 'EAST' / 'WEST': to move in that direction\n- 'HELP': to display this help message\n- 'QUIT': to quit the game"
-
         );
 
         textReply = "You can use the following commands: \n- look: to look around the room\n- examine [item]: to look at the description of an item\n- take [item]: to pick up an item\n- drop [item]: to drop an item\n- inventory: to see your inventory\n- north/south/east/west: to move in that direction\n- help: to display this help message\n- quit: to quit the game.";
@@ -350,7 +383,7 @@ export const domDisplay = (playerInput) => {
                 Directions: ${getValidDirections(currentRoom).join(", ").toUpperCase()}`;
         return textReply;
 
-        //FIXME: FIXED! NEED ANOTHER OPTION FOR MESSAGE IF INVALID DIRECTION IS INPUT RATHER THAN GENERIC ERROR //
+        //FIXME: NEED ANOTHER OPTION FOR MESSAGE IF INVALID DIRECTION IS INPUT RATHER THAN GENERIC ERROR //
 
 
     } else {
