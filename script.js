@@ -115,7 +115,7 @@ const screwdriver = new Item(
 
 const note = new Item(
     "Note",
-    "A loose piece of paper with some writing on it: 'My stars shine darkly over me: the malignancy of my fate might perhaps distemper yours; decide your beginning. A figure is scrawled below the writing that looks like a hastily drawn tree with a caption that reads, 'object_Object'",
+    "A loose piece of paper with some writing on it: 'My stars shine darkly over me: the malignancy of my fate might perhaps distemper yours; decide your beginning.' A figure is scrawled below the writing that looks like a hastily drawn tree with a caption that reads, 'object_Object'",
     true
 );
 
@@ -127,7 +127,7 @@ const brooch = new Item(
 
 const mirror = new Item(
     "Mirror",
-    "A small opalescent mirror with a large crack through it. The mirror has a hangtag on it, which reads: \"'Mirrors,' she said, 'are never to be trusted.'",
+    "A small opalescent mirror with a large crack through it. The mirror has a hangtag on it, which reads: \"'Mirrors,' she said, 'are never to be trusted.'\"",
     false
 );
 
@@ -139,7 +139,7 @@ const knife = new Item(
 
 const horn = new Item(
     "Horn",
-    "A conspicuously tiny palm-sized representation of a tuba.",
+    "A conspicuously tiny, palm-sized representation of a tuba.",
     true
 );
 
@@ -383,8 +383,17 @@ export const domDisplay = (playerInput) => {
                 Directions: ${getValidDirections(currentRoom).join(", ").toUpperCase()}`;
         return textReply;
 
-        //FIXME: NEED ANOTHER OPTION FOR MESSAGE IF INVALID DIRECTION IS INPUT RATHER THAN GENERIC ERROR //
+        //* FIXED! OTHER OPTION FOR MESSAGE IF INVALID DIRECTION IS INPUT RATHER THAN GENERIC ERROR: //
 
+    } else if (action === "north" && !currentRoom.north || action === "n" && !currentRoom.north ||
+    action === "south" && !currentRoom.south || action === "s" && !currentRoom.south ||
+    action === "east" && !currentRoom.east || action === "e" && !currentRoom.east ||
+    action === "west" && !currentRoom.west || action === "w" && !currentRoom.west) {
+
+    console.log("Invalid DIRECTION, try looking for another direction.");
+
+    textReply = "Invalid DIRECTION, try looking for another direction.";
+    return textReply;
 
     } else {
         console.log("Invalid command, type 'help' for a list of commands.");
