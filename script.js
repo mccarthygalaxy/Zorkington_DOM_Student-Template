@@ -82,12 +82,23 @@ const livingRoom = new Room(
 
 const kitchen = new Room(
     "Kitchen",
-    "You are in a spacious kitchen with somewhat dated appliances. The appliances have strange modifications to them including various metal coils, wires and glass tubes, without apparent purpose. To the east is the Conservatory. To the west is the Living Room."
+    "You are in a spacious kitchen with somewhat dated appliances. The appliances have strange modifications to them including various metal coils, wires and glass tubes, without apparent purpose. To the east is the Conservatory. To the north is a Dim Hallway. To the west is the Living Room."
 );
 
 const conservatory = new Room(
     "Conservatory",
     "You are in a conservatory with lots of stained glass and pebbled windows. Light filters through, although you cannot discern what is directly outside. There are many plants, unusual flowers and even a few trees in huge pots. There is an earthy scent peppered with floral accents that is entirely pleasant. To the west is the Kitchen."
+);
+
+// Additional Rooms created:
+const dimHallway = new Room(
+    "Dim Hallway",
+    "You are in long-ish dimly lit hallway. There is small gaslight lamp about halway down the hall, although it is too high up to reach. To the north is the Library. To the south is the Kitchen."
+);
+
+const library = new Room(
+    "Library",
+    "You are in a library with rows and rows of shelves with books, old and new. Many leather-bound volumes fill the top rows. Some have heavy brass bindings and others have what appear to be locks on them. There is dim lighting and a table with a brighter reading lamp in the center of the room. To the south is a Dim Hallway."
 );
 
 //* Connect the Rooms ----------------------------------------------->
@@ -98,6 +109,12 @@ livingRoom.east = kitchen;    // adds to livingRoom this.east value A) east "exi
 kitchen.east = conservatory;  //  adds to kitchen this.east value A) east "exists" and B) conservatory is east of kitchen
 kitchen.west = livingRoom;    //  adds to kitchen this.west value A) west "exists" and B)livingRoom is west of kitchen
 conservatory.west = kitchen;  //  adds to conservatory this.west value A) west "exists" and B) kitchen is west of conservatory
+
+// Additional Rooms Connect:
+kitchen.north = dimHallway;
+dimHallway.south = kitchen;
+dimHallway.north = library;
+library.south = dimHallway;
 
 //! Create new instances of Items -------------------------------------------->
 
@@ -155,6 +172,31 @@ const device = new Item(
     true
 );
 
+// Additional new Items created: 
+const compass = new Item(
+    "Compass",
+    "A gold plated compass. When opened, it has an ornate face with the eight compass points displayed in calligraphic script. The topmost letter is in red; however, instead of 'N', it displays an ornate five pointed star. The face of the compass seems to pulse with the tiniest of blue dots, that are barely perceptible, which shift position each time they appear.",
+    false
+);
+
+const magnifyingGlass = new Item(
+    "Magnifying Glass",
+    "A large ornate magnifying glass. The handle is made of ivory and is carved with strange lettering in an unrecognizble language. The lens seems quite thick and heavy, and is absolutely perfect with no blemishes or scratches. The end of the handle is tipped with a small crystal orb.",
+    true
+);
+
+const jadeIdol = new Item(
+    "Jade Idol",
+    "This is a small figurine, made of creamy jade, which seems to represent a tiny monster of some sort. The creature has a large mouth with pointy teeth, wide eyes, and claws on its feet and hands. The sculptor clearly has a vivid imagination, because surely nothing like this exists in the real world.",
+    true
+);
+
+const spider = new Item(
+    "Annoyed Spider",
+    "This is a small, hairy spider. It looks at you warily. You get the distinct feeling if you leave it alone, it will leave you alone. However, it continues to stare at you from it's place on the floor.",
+    false
+);
+
 //* Push Items To Rooms ------------------------------------------------------------>
 
 foyer.addItem(note);
@@ -166,6 +208,13 @@ kitchen.addItem(bottle);
 kitchen.addItem(device);
 conservatory.addItem(brooch);
 conservatory.addItem(mirror);
+
+// Push new Items to Rooms
+library.addItem(compass);
+library.addItem(magnifyingGlass);
+dimHallway.addItem(jadeIdol);
+dimHallway.addItem(spider);
+
 
 //? Assign & Reset Player basics -------------------------------------------------->
 
